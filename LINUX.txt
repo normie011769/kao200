@@ -1,0 +1,348 @@
+command -[options] [parameter]
+
+
+ls -l /Desktop/test.txt 以列表列出後面目錄的檔案
+
+ls [-a -l -h] [路徑]列出目錄下的內容
+-a = 所有文件(含隱藏檔案)
+-l = 以列表(直向排序)展示內容+詳細資訊
+	d代表文件夾 - 代表文件
+
+-h = 列出文件大小 (且須搭配-l一起使用)
+
+可以共用如:ls -a -l
+ls -la ; ls -al
+
+
+cd [路徑] 切換目錄
+無參數則切到默認目錄
+
+pwd 查看當前工作目錄
+
+
+cd ./Desktop 切到當前目錄下的Desktop目錄內 = cd Desktop
+cd .. 回到上一目錄 cd ../.. 回到上二目錄
+cd ~表home目錄 切到home目錄 cd ~/Desktop 切到home內的Desktop目錄 
+
+
+mkdir [-p] [路徑] 創建目錄(參數必填)
+-p 可選 表自動創建不存在的父目錄 適用創建連續多層級目錄
+mkdir -p test/test1/test2 
+在home外創建會涉及權限問題
+
+
+touch [路徑]創建文件  相對 絕對 特殊路徑符都可使用
+
+cat [路徑]查看文件內容 相對 絕對 特殊路徑符都可使用
+more [路徑] 與cat相同但是內容過多可翻頁 cat為將內容全部展示
+	空格鍵翻頁;q退出文件
+
+
+cp -r [路徑parameter1] [路徑parameter2] 複製文件or文件夾
+-r 表示循環 用於複製文件夾   para1 = 被複製的文件or文件夾 para2 = 要複製去的地方
+
+mv [路徑parameter1] [路徑parameter2]移動文件or文件夾
+para2 = 若目標不存在則進行改名 確保目標存在
+
+
+rm [-r -f] parameter1....
+-r 用於刪除文件夾
+-f 表force 強制刪除 (以root權限刪除會有系統提示 -f可略過提示)
+para1... 表要刪除的文件或文件夾路徑
+
+rm通配符
+ex:test* 表示匹配到任何以test開頭的內容
+   *test 表示匹配到任何以test結尾的內容
+   *test* 表示匹配到任何包含test的內容
+
+
+grep [-n] 關鍵字 文件路徑
+-n 在結果中顯示匹配行的行號
+關鍵字 = 過濾的關鍵字 帶有空格或其他特殊符號 建議使用""將關鍵字包起來
+文件路徑 = 要過濾內容的文件路徑 做為內容輸入端口(管道符|)
+
+
+
+wc [-c -m -l -w] 文件路徑  統計文件的行數 單詞數 字節數 字符數等
+-c 統計bytes數量
+-m 統計字符數量
+-l 統計行數
+-w 統計單詞數量
+文件路徑 = 被統計的文件 做為內容輸入端口(管道符|)
+
+	testit
+	linux test server 
+wc test.txt -> 2(行) 4(單詞數) 25(字節數) test.txt
+
+
+which 要查找的命令 查看所使用的一系列命令的程序文件放在哪裡
+
+
+管道符= | 將管道符左邊的結果 作為右邊命令的輸入
+
+
+find 起始路徑 -name "被查找文件名" 按文件名查找文件
+
+ex:test* 表示匹配到任何以test開頭的內容
+   *test 表示匹配到任何以test結尾的內容
+   *test* 表示匹配到任何包含test的內容
+
+find 起始路徑 -size  - or + 大小
+ex: find / -size -10k (找小於10kb的文件)
+ find / -size +100M(找大於100MB的文件)
+
+
+echo 輸出內容 印出指定內容
+echo `pwd` 印出當前路徑
+
+重定向符 > and >>
+> 將左側命令 覆蓋到符號右側指定的文件中 echo "hi linux" > test.txt
+>> 將左側命令 追加到符號右側指定的文件中
+
+tail  [-f -num (-5)] linux路徑 查看文件尾部內容 跟蹤文件的最新更改
+-f 持續跟蹤
+-num 查看尾部多少行 預設10行
+
+
+vim 編輯器
+command mode - 輸入的字皆判定為命令 此模式下不能自由進行文本編輯
+   (輸入i, a, o進入insert mode) (輸入esc回到command mode)
+insert mode - 可對文件內容進行自由編輯
+   (輸入: 進入last line mode wq表儲存並退出)
+Last line mode - 以:開始 用於文件的保存 退出
+
+vi 文件路徑
+vim 文件路徑
+若文件不存在 此命令利用於編輯新文件
+文件存在 用於編輯已有文件
+
+
+su - [用戶名] 切換用戶
+sudo 命令 臨時以root權限執行命令
+如何為user設置sudo認證:
+	以root輸入visudo 會以vim打開編輯器 在文件最後添加 user名 ALL=(ALL) NOPASSWD:ALL wq保存退出
+
+
+用戶組管理
+groupadd 用戶組名 新增
+groupdel 用戶組名 刪除
+
+
+用戶創建
+useradd [-g -d] 用戶名
+-g[指定用戶組] 若不指定用戶組 會創建與用戶名同名的組並自動加入  若要使用-g 組必須存在
+-d[指定用戶home路徑] 不指定的話home目錄默認在/home/用戶名 
+
+用戶刪除
+userdel [-r] 用戶名
+
+查看用戶
+id[用戶名]
+
+修改用戶所屬群組
+usermod -aG 用戶組 用戶名 將用戶加入指定用戶組
+
+getent 查看當前系統中有那些用戶
+-> 密碼(x) 用戶id 組id 描述信息 home目錄 執行終端
+
+getent group查看有哪些組
+-> 組名稱 組認證x 組ID
+
+d r w x r - x r - x 表
+首位:d表示文件夾 -表示文件 l表軟連結 
+2-4位:用戶權限 (-)表示無權限 r=read w=write x=execute(cd權限)
+5-7:用戶組權限
+8-10:其他用戶權限
+
+chmod [-R] 權限 文件或文件夾  修改權限
+(只有文件 文件夾的所屬用戶或ROOT用戶可以修改)
+-R 對文件夾內的全部內容應用同樣的操作
+
+ex:chmod u=rwx,g=rx,o=x hello.txt 將文件權限修改為:rwxr-x--x(u=user g=group o=other)
+chmod -R u=rwx,g=rx,o=x test 將文件夾test以及文件夾內全部內容權限設置為rwxr-x--x
+
+快速寫法:	    4 2 1 二進位	
+chmod 751 test.txt  _ _ _
+      		    r w x
+		    u g o
+
+
+chown [-R] [用戶][:][用戶組] 文件或文件夾 (普通用戶無法修改所屬為其他用戶或組 此命令只適用於root用戶執行)
+-R:對文件夾內全部內容應用
+ex:chown root hello.txt 將hello.txt所屬用戶修改為root
+chown :root hello.txt 將hello.txt所屬用戶組修改為root
+
+ctrl+d 退出或登出
+history 查看輸入過的命令 !+[字母] 自動執行最近一次匹配的命令
+ctrl + r 輸入文字 匹配對應的命令 左右鍵可修改
+ctrl + a 跳到命令開頭
+ctrl + e 跳到命令結尾
+ctrl + 左/右鍵 往左/右跳一個單詞
+
+centos:
+yum [-y] [install | remove | search] 軟體名稱     > RPM(linux用)包軟體管理氣 用於自動化安裝配置Linux軟體
+(需要root權限 及 連網)
+-y 自動確認 無須手動確認安裝或移除過程
+
+ubuntu:(.deb格式)
+apt [-y] [install | remove | search] 軟體名稱
+
+
+			     開啟開機自啟 關閉開機自啟  
+systemctl start| stop | status | enable| disable  服務名 
+系統內置得服務 如:
+networkmanager主網路服務
+network副網路服務
+firewalld防火牆服務
+sshd ssh服務
+
+yum安裝的第三方軟體也能使用systemctl控制
+
+
+ln -s parameter1 parameter2
+-s 創建軟連結
+para1 被連結的文件或文件夾
+para2 要連結去的目的地  
+
+
+date [-d] [+格式化字符串] 查看系統的時間
+-d 作為日期計算
+ex: date -d "+1 day" +%Y%m%d = 顯示後一天的日期
+-格式化字符串: %Y 年
+%y 年分後兩位數字
+%m 月份
+%d 日
+%H 小時
+%M 分鐘
+%S 秒
+%s 自1970-01-01 00:00:00到現在的秒數
+
+修改時區:
+rm -f /etc/localtime
+sudo ln -s /usr/share/zoneinfo/Asia/Taipei /etc/localtime
+
+
+查看 修改LINUX主機名
+hostname 查看
+hostnamectl set-hostname 主機名 修改(root權限)
+
+
+ping [-c num] ip,主機名  檢查網路是否連通
+-c 檢查的次數 不使用-c 將無限次查詢
+ex:ping -c 3 12.34.56.78 檢查3次連線狀態
+
+
+wget [-b] url 下載網路文件or軟體
+-b 可選 後臺下載 會將日誌寫入到當前工作目錄的wget-log文件
+
+
+curl [-O] url 發送http網路請求 用於下載文件 獲取訊息或 等 
+-O 用於下載文件  當URL是下載連結時 可以使用此選項保存文件
+
+
+nmap IP地址  查看端口的佔用情況
+
+netstat -anp | grep 連接埠 查看過濾後的連接埠占用情況
+
+
+ps [-e -f] 查看linux中的運行的程序
+-e 顯示出全部的程序
+-f 以完全格式化形式展示信息(全部)
+
+PID:程序ID
+PPID:程序的父ID
+C:程序CPU占用率 
+STIME:程序的啟動時間
+TTY:啟動此程序的終端序號(?則表非終端啟動)
+TIME:程序占用CPU的時間
+CMD:程序對應的名稱或啟動路徑或啟動命令
+
+kill [-9] 程序id  結束指定程序
+-9 表強制關閉 未指定-9 會向程序發送請求要求關閉 是否關閉看程序自身處理機制
+
+
+top 查看系統資源占用
+-p 顯示某程序的信息
+-d 設置刷新時間 默認5s
+-c 顯示產生程序的完整命令 默認是程序名
+-n 指定刷新次數 例:top -n 3 刷新輸出3次後退出
+-b 以非交互非全頻運行 以批次的方式執行top 一般配合-n指定輸出幾次統計信息 將輸出定向到指定文件 如:top -b -n 3 > /tmp/top.tmp
+-i 不顯示任何閒置(idle)或無用(zombie)的程序
+-u 找特定user啟動的程序
+
+
+df[-h] 磁碟信息監控
+-h 單位顯示
+
+
+iostat[-x][num1][num2]  查看cpu 磁碟相關信息
+-x 顯示更多信息
+num1:刷新間隔 num2:刷新幾次
+
+
+sar -n DEV num1 num2
+-n 查看網路 
+DEV表查看網路接口 
+num1:刷新間隔 num2:刷新幾次
+
+
+env 查看當前系統中的環境變量 (可與| grep 使用)
+
+echo $PATH 取得PATH環境變量
+echo ${PATH}ABC 取得PATH環境變量後加上ABC
+
+export 變量名=變量值  自行設置環境變量 (暫時性)
+
+永久生效:
+針對當前用戶生效，配置在當前用戶的~/bashrc 文件中
+針對所有用戶生效，配置在系統的 /etc/profile 文件中
+之後使用source配置文件   進行立刻生效 or 重新登入ssh
+
+若需要自定義 環境變量
+修改PATH:export PATH=$PATH:/你的文件路徑  如此 輸入文件明後就可以執行命令(如cd等等)
+		     (確保原有內容)
+
+
+rz sz (yum lrzsz)
+rz 上傳 sz下載
+
+壓縮格式 linux:tar(.tz) gzip(.gz)
+
+tar [-c -v -x -f -z -C] [PARAMETER 1....]
+-c 創建壓縮文件 壓縮模式
+-v 顯示壓縮解壓縮過程 察看進度
+-x 解壓縮模式
+-f 要創建的文件 或要解壓縮的文件-f必須在所有選項中位置處於最後一個
+-z gzip模式 不使用-z就是普通tarball格式(處於第一個位置)
+-C 選擇解壓縮的目的地 用於解壓縮模式
+
+tar -cvf test.tar 1.txt 2.txt 3.txt -> 表示將1.txt 2.txt 3.txt 壓縮成一個test.tar檔案
+
+tar -zcvf test.tar.gz 1.txt 2.txt 3.txt -> 將1.txt 2.txt 3.txt 壓縮到test.tar.gz文件內 使用gzip模式
+
+
+解壓縮常用
+tar -xvf test.tar
+tar -xvf test.tar -C /home/kuo -> 解壓縮test.tar將文件解壓縮至指定目錄
+tar -zxvf test.tar.gz -C /home/kuo -> 以gzip模式解壓縮test.tar.gz 將文建解壓縮至指定目錄
+-C 單獨使用 和其他參數分開
+-f 最後一位
+-z 建議放開頭位置
+
+
+zip [-r] parameter1 .... 可使用zip命令 壓縮文件為zip壓縮包
+-r 被壓縮的包含文件夾的時候 需要使用-r選項 和rm cp等命令-r效果相同
+ 
+ex: zip test.zip a.txt b.txt c.txt -> 將a.txt b.txt c.txt壓縮到test.zip文件內
+zip -r test.zip test kuo a.txt -> 將test kuo 兩個文件夾和a.txt 壓縮到test.zip文件內
+
+unzip [-d] parameter  解壓縮zip壓縮包
+-d 指定要解壓縮去的位置 同tar的-C選項
+PARAMETER 被解壓縮的zip壓縮包文件
+
+ex: unzip test.zip 解壓縮test.zip到當前目錄
+unzip test.zip -d /home/kuo  將test.zip解壓縮到指定目錄
+
+
+mysql 密碼:Linuxkuo666_
+
