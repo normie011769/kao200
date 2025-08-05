@@ -1,0 +1,87 @@
+
+docker pull vllm/vllm-openai:latest
+
+
+
+
+
+sudo docker run --rm   --gpus all    -v ~/.cache/huggingface:/root/.cache/huggingface   --env HUGGING_FACE_HUB_TOKEN=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   -p 8000:8000   --ipc=host   vllm/vllm-openai:latest   --model meta-llama/Llama-3.1-8B-Instruct   --gpu_memory_utilization 0.75   --max_num_seqs 64   --max_model_len 1024   --dtype float16   --host 0.0.0.0 --tensor-parallel-size 4
+
+sudo docker run --rm   --gpus all   -v ~/.cache/huggingface:/root/.cache/huggingface   -v /home/user/Desktop/ai_model_train/output/llm:/models   -p 8000:8000   --env HUGGING_FACE_HUB_TOKEN=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   --ipc=host   vllm/vllm-openai:latest   --model /models/llama_421   --gpu_memory_utilization 0.75   --max_num_seqs 64   --max_model_len 1024   --dtype float16   --host 0.0.0.0   --tensor-parallel-size 4
+
+udo docker run --rm   --gpus all   -v ~/.cache/huggingface:/root/.cache/huggingface   -v /home/user/Desktop/ai_model_train/models:/models   -p 8000:8000   --env HUGGING_FACE_HUB_TOKEN=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   --ipc=host   vllm/vllm-openai:latest   --model /models/Breeze2   --gpu_memory_utilization 0.75   --max_num_seqs 64   --max_model_len 1024   --dtype float16   --host 0.0.0.0   --tensor-parallel-size 4
+
+sudo docker run --rm   --gpus all -v /home/user/Desktop/ai_model_train/output/llm:/llm   -p 8000:8000   --env HUGGING_FACE_HUB_TOKEN=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   --ipc=host   vllm/vllm-openai:latest   --model /llm/Qwen3-8B --gpu_memory_utilization 0.5  --max_num_seqs 512   --max_model_len 2048   --dtype float16   --host 0.0.0.0   --tensor-parallel-size 4
+(使用自有model指令)
+
+
+
+
+
+1. GPU 存取
+--gpus all：Docker 會將宿主機所有可用的 NVIDIA GPU 裝置暴露給容器，使 vLLM 能在 GPU 上執行推理運算​
+DOCKER DOCUMENTATION
+。
+
+2. 快取目錄掛載
+-v ~/.cache/huggingface:/root/.cache/huggingface：將宿主機的 Hugging Face 模型快取目錄映射到容器內，避免每次啟動都重新下載模型，提升啟動速度與效率​
+VLLM
+。
+
+3. 環境變數傳遞
+--env "HUGGING_FACE_HUB_TOKEN=hf_..."：將你的 HF 訪問權杖注入容器，讓 vLLM 在拉取需授權的模型時能通過認證；環境變數 HUGGING_FACE_HUB_TOKEN 會覆寫 $HF_HOME/token 內的預設值​
+HUGGING FACE
+HUGGING FACE
+。
+
+4. 網路端口映射
+-p 8000:8000：將容器內的 8000 端口對應到宿主機的 8000 端口，使你能在外部透過 http://localhost:8000 或其他服務器 IP 存取 API​
+DOCKER DOCUMENTATION
+。
+
+5. IPC 共享記憶體
+--ipc=host：讓容器使用主機的 IPC 命名空間，減少多進程間通訊延遲，對高併發、高吞吐量的推理場景尤為重要；但需注意這會降低隔離性，增添攻擊面​
+STACK OVERFLOW
+。
+
+vLLM 伺服器參數
+6. Docker 映像與標籤
+vllm/vllm-openai:latest：使用官方最新版映像，包含 OpenAI-compatible API server 入口點與預先安裝的 vLLM 套件​
+VLLM
+DOCKER HUB
+。
+
+7. 模型選擇
+--model meta-llama/Llama-3.2-1B-Instruct：指定要載入的模型路徑或名稱，此例為 Llama‑3.2‑1B‑Instruct，容器會透過 HF Hub 自動下載並快取​
+MEDIUM
+。
+
+8. GPU 記憶體利用率
+--gpu_memory_utilization 0.75：告訴 vLLM 預先分配 GPU 記憶體的 75% 作為 KV cache，以平衡吞吐量與避免過度分配導致的 OOM；可根據實際 GPU VRAM 大小微調​
+VLLM
+。
+
+9. 批次序列數量
+--max_num_seqs 64：設定單次推理時可同時處理的序列批大小上限，影響吞吐量與延遲之間的平衡；較大值提升吞吐，但佔用更多記憶體​
+GITHUB
+。
+
+10. 最大上下文長度
+--max_model_len 2048：將模型的可處理上下文長度限制在 2,048 個 token 以內，超過時會自動截斷到最新的 2,048 token，控制記憶體佔用與計算成本​
+GITHUB
+。
+
+11. 數值精度
+--dtype float16：將模型參數與運算精度設定為半精度浮點（FP16），降低記憶體佔用並加速推理，但需 GPU 支援 FP16；float16 等同於 half​
+VLLM
+。
+
+12. 伺服器綁定地址
+--host 0.0.0.0：告訴 vLLM 的 FastAPI/Uvicorn 伺服器監聽所有網路介面，允許局域網內其他設備或互聯網（視防火牆設定）存取此服務​
+MEDIUM
+。
+
+以上即為該 docker run 指令的完整解析。執行後，你的 4×20 GB GPU 伺服器即可在 http://<主機IP>:8000 提供高效、支援多使用者的 Llama-3.2-1B-Instruct 推理服務，並享有 vLLM 的 PagedAttention 與高併發優化。若有進一步疑問或調優需求，歡迎隨時討論！
+
+
+
